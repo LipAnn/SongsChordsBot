@@ -7,13 +7,12 @@ from aiogram import Bot, Dispatcher, types, Router
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, ContentType
-from aiogram.utils.markdown import hbold
-
 
 load_dotenv(find_dotenv())
 TOKEN = getenv('TELEGRAM_API_BOT_TOKEN')
 
 dp = Dispatcher()
+
 
 @dp.message(Command('start'))
 async def command_start_handler(message: Message) -> None:
@@ -32,13 +31,14 @@ async def voice_handler(message: Message) -> None:
     voice = message.voice
     print(voice.duration)
     await message.answer_audio(audio=voice)
-
-    
+ 
 async def main() -> None:
     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
     await dp.start_polling(bot)
 
-
-if __name__ == "__main__":
+def start_bot() -> None:
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
+
+if __name__ == "__main__":
+    start_bot()

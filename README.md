@@ -6,3 +6,4 @@ https://miro.com/welcomeonboard/ZE1zZG5jZEk1VFZBbkJRdXFXRE00bkZKRHA0dW9MN1VGbGlT
 Полезная теория для проекта: 
 https://colab.research.google.com/drive/1Vw19AB7OaHDnETgNne99d_3Ry6jkFMey?usp=sharing
 
+Бот в телеграм [@SongsChordsBot](https://t.me/SongsChordsBot)
