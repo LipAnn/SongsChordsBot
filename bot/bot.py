@@ -3,15 +3,23 @@ import logging
 import asyncio
 from os import getenv
 from dotenv import load_dotenv, find_dotenv
-from aiogram import Bot, Dispatcher, types, Router
+from aiogram import Bot, Dispatcher, types, Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message, ContentType
+from pathlib import Path
+
 
 load_dotenv(find_dotenv())
 TOKEN = getenv('TELEGRAM_API_BOT_TOKEN')
 
+bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
+logging.basicConfig(
+    level=logging.INFO,
+    stream=open('bot.log', 'w'),
+    format="[%(asctime)s] %(levelname)s %(message)s"
+)
 
 
 @dp.message(Command('start'))
@@ -28,20 +36,11 @@ async def command_help_handler(message: Message) -> None:
     )
 
 
-@dp.message()
-async def voice_handler(message: Message) -> None:
-    voice = message.voice
-    print(voice.duration)
-    await message.answer_audio(audio=voice)
-
-
 async def main() -> None:
-    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
     await dp.start_polling(bot)
 
 
 def start_bot() -> None:
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
 
 
