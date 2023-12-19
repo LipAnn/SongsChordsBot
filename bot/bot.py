@@ -16,8 +16,8 @@ TOKEN = getenv('TELEGRAM_API_BOT_TOKEN')
 bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 logging.basicConfig(
-    level=logging.INFO, 
-    stream=open('bot.log', 'w'), 
+    level=logging.INFO,
+    stream=open('bot.log', 'w'),
     format="[%(asctime)s] %(levelname)s %(message)s"
 )
 
