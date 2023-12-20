@@ -10,10 +10,8 @@ def get_free_gpus():
     gpu_df = pd.read_csv(io.StringIO(gpu_stats),
                          names=['memory.used', 'memory.free'],
                          skiprows=1)
-    print('GPU usage:\n{}'.format(gpu_df))
     gpu_df['memory.free'] = gpu_df['memory.free'].map(lambda x: x.rstrip(' [MiB]')).astype(int)
     idx = gpu_df.nlargest(2, ['memory.free']).index
-    print(idx)
     return tuple(idx)
 
 class Backend:
