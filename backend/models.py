@@ -1,18 +1,31 @@
-import io
 import autochord
+import io
 import whisper
+import pandas as pd
+import subprocess
 from .formatter import Formatter
 
+def get_free_gpus():
+    gpu_stats = subprocess.check_output(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"], text=True)
+    gpu_df = pd.read_csv(io.StringIO(gpu_stats),
+                         names=['memory.used', 'memory.free'],
+                         skiprows=1)
+    print('GPU usage:\n{}'.format(gpu_df))
+    gpu_df['memory.free'] = gpu_df['memory.free'].map(lambda x: x.rstrip(' [MiB]')).astype(int)
+    idx = gpu_df.nlargest(2, ['memory.free']).index
+    print(idx)
+    return tuple(idx)
 
 class Backend:
     def __init__(self) -> None:
         self.formatter = Formatter()
-        self.model = whisper.load_model("medium", device="cuda:4")
+        gpu1, gpu2 = get_free_gpus()
+        self.model = whisper.load_model("medium", device=f"cuda:{gpu1}")
 
-        self.model.encoder.to("cuda:4")
-        self.model.decoder.to("cuda:5")
-        self.model.decoder.register_forward_pre_hook(lambda _, inputs: tuple([inputs[0].to("cuda:5"), inputs[1].to("cuda:5")] + list(inputs[2:])))
-        self.model.decoder.register_forward_hook(lambda _, inputs, outputs: outputs.to("cuda:4"))
+        self.model.encoder.to(f"cuda:{gpu1}")
+        self.model.decoder.to(f"cuda:{gpu2}")
+        self.model.decoder.register_forward_pre_hook(lambda _, inputs: tuple([inputs[0].to(f"cuda:{gpu2}"), inputs[1].to(f"cuda:{gpu2}")] + list(inputs[2:])))
+        self.model.decoder.register_forward_hook(lambda _, inputs, outputs: outputs.to(f"cuda:{gpu1}"))
 
     def query_pdf(self, *, audio: str, add_tabs: bool) -> io.BytesIO:
         ...
