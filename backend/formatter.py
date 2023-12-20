@@ -37,6 +37,11 @@ class Formatter:
         return events
 
     def events_to_str(self, events: list[Event]) -> str:
+        '''
+        Аккорды расставляются над соответствующей им строкой.
+        Считаем примерное время длительности одного символа текста 
+        и этот коэффициент умножаем на длительность каждого аккорда
+        '''
         full_time = 0
         sum_symbols = 0
         for el in events:
@@ -67,9 +72,9 @@ class Formatter:
                     queue_chords.pop(0)
                 result += '\n'
                 while queue_chords:
-                    result += queue_chords[0].content + \
-                    ' ' * int((queue_chords[0].end - \
-                    max(queue_chords[0].start, el.start)) * space)
+                    result += queue_chords[0].content + ' ' * int(
+                        (queue_chords[0].end - max(queue_chords[0].start, el.start)) * space
+                    )
                     queue_chords.pop(0)
                 last_phrase = el
         while queue_chords:
