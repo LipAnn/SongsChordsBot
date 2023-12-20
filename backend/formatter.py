@@ -40,35 +40,38 @@ class Formatter:
         full_time = 0
         sum_symbols = 0
         for el in events:
-            if el['type'] == 2:
-                sum_symbols += len(el['content'])
-                full_time += el['end'] - el['start']
+            if el.type == 2:
+                sum_symbols += len(el.content)
+                full_time += el.end - el.start
         space = max(sum_symbols // full_time, 1)
         queue_chords = []
         result = ""
         last_phrase = None
         for el in events:
-            if el['type'] == 1:
+            if el.type == 1:
                 if last_phrase:
-                    if el['start'] <= last_phrase['end']:
-                        result += el['content'] + '\n' + last_phrase['content'] + '\n'
+                    if el.start <= last_phrase.end:
+                        result += el.content + '\n' + last_phrase.content + '\n'
                     else:
-                        result += '\n' + last_phrase['content'] + '\n'
+                        result += '\n' + last_phrase.content + '\n'
                         queue_chords.append(el)
                     last_phrase = None
                 else:
                     queue_chords.append(el)
             else:
-                while queue_chords and queue_chords[0]['end'] < el['start']:
-                    result += queue_chords[0]['content'] + \
-                    + ' ' * int((queue_chords[0]['end'] - queue_chords[0]['start']) * space)
+                while queue_chords and queue_chords[0].end < el.start:
+                    result += queue_chords[0].content + \
+                    + ' ' * int((queue_chords[0].end - queue_chords[0].start) * space)
                     queue_chords.pop(0)
                 result += '\n'
                 while queue_chords:
-                    result += queue_chords[0]['content'] + \
-                    + ' ' * int((queue_chords[0]['end'] - max(queue_chords[0]['start'], el['start'])) * space)
+                    result += queue_chords[0].content + \
+                    + ' ' * int((queue_chords[0].end - max(queue_chords[0].start, el.start)) * space)
                     queue_chords.pop(0)
                 last_phrase = el
+        while queue_chords:
+                    result += queue_chords[0].content + ' '
+                    queue_chords.pop(0)
         return result
 
     def format(self, chords, text) -> str:
