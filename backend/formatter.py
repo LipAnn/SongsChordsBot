@@ -21,7 +21,7 @@ class Formatter:
     def __init__(self) -> None:
         ...
 
-    def format(self, chords, text) -> str:
+    def parse_raw(self, chords, text) -> list[Event]:
         events: list[Event] = []
         for chord in chords:
             content = chord[2][:-4]
@@ -34,4 +34,11 @@ class Formatter:
                     
         events.sort(key=attrgetter("start"))
 
-        return json.dumps(events, indent=4, default=lambda o: asdict(o))
+        return events
+
+    def events_to_str(self, events: list[Event]) -> str:
+        return json.dumps(events, indent=4, default=lambda o: asdict(o), ensure_ascii=False)
+
+    def format(self, chords, text) -> str:
+        events = self.parse_raw(chords, text)
+        return self.events_to_str(events) 
