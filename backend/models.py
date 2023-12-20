@@ -11,7 +11,7 @@ class Backend:
         ...
 
     def query_txt(self, *, audio: str) -> io.BytesIO:
-        ...
+        return io.BytesIO(bytes(self.query(audio), 'utf-8'))
 
     def query(self, *, audio: str) -> str:
         chords = autochord.recognize(audio)
