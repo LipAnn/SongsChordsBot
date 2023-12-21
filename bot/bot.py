@@ -18,7 +18,6 @@ logging.basicConfig(
 
 from backend import *
 backend = Backend()
-print(backend)
 
 load_dotenv(find_dotenv())
 TOKEN = getenv('TELEGRAM_API_BOT_TOKEN')

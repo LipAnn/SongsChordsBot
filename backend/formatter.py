@@ -55,7 +55,7 @@ class Formatter:
         events.append(
             Event(
                 start=events[-1].end + 1,
-                end=start=events[-1].end + 1,
+                end=events[-1].end + 1,
                 type=EventType.chord,
                 content=''
             )
@@ -65,9 +65,9 @@ class Formatter:
                 if last_phrase:
                     if el.start <= last_phrase[-1].end:
                         result += el.content + '\n' + \
-                        (phrase.content + '\n' for phrase in last_phrase)
+                        ''.join([phrase.content + '\n' for phrase in last_phrase])
                     else:
-                        result += '\n' + (phrase.content + '\n' for phrase in last_phrase)
+                        result += '\n' + ''.join([phrase.content + '\n' for phrase in last_phrase])
                         queue_chords.append(el)
                     last_phrase = []
                 else:
