@@ -52,7 +52,14 @@ class Formatter:
         queue_chords = []
         result = ""
         last_phrase = None
-        events.append(Event(start=events[-1].end + 1, end = start=events[-1].end + 1, type=EventType.chord, content=''))
+        events.append(
+            Event(
+                start = events[-1].end + 1, 
+                end = start=events[-1].end + 1, 
+                type = EventType.chord, 
+                content = ''
+            )
+        )
         for el in events:
             if el.type == EventType.chord:
                 if last_phrase:
