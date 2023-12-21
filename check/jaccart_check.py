@@ -1,10 +1,10 @@
 import Levenshtein
 from backend import EventType, Event
 
-def By_bar(elem):
+def by_bar(elem):
     return elem[1]
 
-def Jaccart(true_event, predict_event):
+def jaccart(true_event, predict_event):
     chords_true = []
     num_of_chord = []
     for i in range(0, len(true_event)):
@@ -65,20 +65,17 @@ def Jaccart(true_event, predict_event):
     cnt = 0
     last_left = []
     cnt_of_left = []
-    list_of_point.sort(key=By_bar)
+    list_of_point.sort(key=by_bar)
     for i in range(1, len(list_of_point)):
         if list_of_point[i - 1][1] == list_of_point[i][1] and list_of_point[i][0] == 1:
             list_of_point[i], list_of_point[i - 1] = list_of_point[i - 1], list_of_point[i]
-    # for i in list_of_point :
-    #     print(i[0], i[1], i[2])
-    # print()
     for i in range(0, len(num_of_chord)):
         last_left.append(0)
         cnt_of_left.append(0)
     maximum = 0
     result = 0
     for i in range(0, len(list_of_point)):
-        if cnt >= 1 :
+        if cnt >= 1:
             maximum += list_of_point[i][1] - list_of_point[i - 1][1]
         if list_of_point[i][0] == 1:
             cnt += 1
@@ -87,32 +84,6 @@ def Jaccart(true_event, predict_event):
         else :
             cnt -= 1
             if cnt_of_left[list_of_point[i][2]] > 1:
-                # print(list_of_point[i][1], last_left[list_of_point[i][2]])
                 result += list_of_point[i][1] - last_left[list_of_point[i][2]]
             cnt_of_left[list_of_point[i][2]] -= 1
-    # print(result, maximum)
     return result / maximum
-
-# size_of_true = int(input())
-# chords_true = []
-# for i in range(0, size_of_true) :
-#     info = input().split()
-#     v = Event(0, 0, EventType(1), "")
-#     v.start = float(info[0])
-#     v.end = float(info[1])
-#     v.type = int(info[2])
-#     v.content = info[3]
-#     chords_true.append(v)
-# size_of_predict = int(input())
-# chords_predict = []
-# for i in range(0, size_of_predict) :
-#     info = input().split()
-#     v = Event(0, 0, EventType(1), "")
-#     v.start = float(info[0])
-#     v.end = float(info[1])
-#     v.type = int(info[2])
-#     v.content = info[3]
-#     chords_predict.append(v)
-# # print(chords_true[0].start, chords_true[0].end, chords_true[0].type, chords_true[0].content)
-# # print(chords_predict[0].start, chords_predict[0].end, chords_predict[0].type, chords_predict[0].content)
-# print(Jaccart(chords_true, chords_predict))

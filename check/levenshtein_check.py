@@ -1,7 +1,7 @@
 import Levenshtein
 from backend import EventType, Event
 
-def Levenstein(true_event, predict_event):
+def levenshtein(true_event, predict_event):
     table_of_true = []
     table_of_predict = []
     num_of_chord = []
@@ -51,26 +51,3 @@ def Levenstein(true_event, predict_event):
         for i in range(left_bar, right_bar + 1):
             table_of_predict[i] = num
     return 1 - Levenshtein.distance(table_of_true, table_of_predict) / 1.0 / mx_bar
-
-
-# size_of_true = int(input())
-# chords_true = []
-# for i in range(0, size_of_true) :
-#     info = input().split()
-#     v = Event(0, 0, EventType(1), "")
-#     v.start = float(info[0])
-#     v.end = float(info[1])
-#     v.type = int(info[2])
-#     v.content = info[3]
-#     chords_true.append(v)
-# size_of_predict = int(input())
-# chords_predict = []
-# for i in range(0, size_of_predict) :
-#     info = input().split()
-#     v = Event(0, 0, EventType(1), "")
-#     v.start = float(info[0])
-#     v.end = float(info[1])
-#     v.type = int(info[2])
-#     v.content = info[3]
-#     chords_predict.append(v)
-# print(levenshtein(chords_true, chords_predict))
