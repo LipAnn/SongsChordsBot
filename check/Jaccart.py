@@ -35,7 +35,7 @@ def jaccart(true_event, predict_event) :
     num_of_chord.append("N")
     list_of_point = []
     pr_finish = 0
-    for chord in chords_true :
+    for chord in chords_true:
         list_of_point.append([1, pr_finish, len(num_of_chord) - 1])
         list_of_point.append([0, chord.start, len(num_of_chord) - 1])
         left_bar = chord.start
@@ -87,7 +87,7 @@ def jaccart(true_event, predict_event) :
         else :
             cnt -= 1
             if cnt_of_left[list_of_point[i][2]] > 1 :
-                print(list_of_point[i][1], last_left[list_of_point[i][2]])
+                # print(list_of_point[i][1], last_left[list_of_point[i][2]])
                 result += list_of_point[i][1] - last_left[list_of_point[i][2]]
             cnt_of_left[list_of_point[i][2]] -= 1
     # print(result, maximum)
@@ -113,6 +113,6 @@ def jaccart(true_event, predict_event) :
 #     v.type = int(info[2])
 #     v.content = info[3]
 #     chords_predict.append(v)
-# print(chords_true[0].start, chords_true[0].end, chords_true[0].type, chords_true[0].content)
-# print(chords_predict[0].start, chords_predict[0].end, chords_predict[0].type, chords_predict[0].content)
-# print(Jaccart(chords_true, chords_predict))
+# # print(chords_true[0].start, chords_true[0].end, chords_true[0].type, chords_true[0].content)
+# # print(chords_predict[0].start, chords_predict[0].end, chords_predict[0].type, chords_predict[0].content)
+# print(jaccart(chords_true, chords_predict))
