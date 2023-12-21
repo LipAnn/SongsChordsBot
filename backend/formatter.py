@@ -51,17 +51,25 @@ class Formatter:
         space = max(sum_symbols // full_time, 1)
         queue_chords = []
         result = ""
-        last_phrase = None
+        last_phrase = []
+        events.append(
+            Event(
+                start=events[-1].end + 1,
+                end=start=events[-1].end + 1,
+                type=EventType.chord,
+                content=''
+            )
+        )
         for el in events:
             if el.type == EventType.chord:
                 if last_phrase:
-                    if el.start <= last_phrase.end:
+                    if el.start <= last_phrase[-1].end:
                         result += el.content + '\n' + \
-                        last_phrase.content + '\n'
+                        (phrase.content + '\n' for phrase in last_phrase)
                     else:
-                        result += '\n' + last_phrase.content + '\n'
+                        result += '\n' + (phrase.content + '\n' for phrase in last_phrase)
                         queue_chords.append(el)
-                    last_phrase = None
+                    last_phrase = []
                 else:
                     queue_chords.append(el)
             else:
@@ -76,7 +84,7 @@ class Formatter:
                         (queue_chords[0].end - max(queue_chords[0].start, el.start)) * space
                     )
                     queue_chords.pop(0)
-                last_phrase = el
+                last_phrase.append(el)
         while queue_chords:
             result += queue_chords[0].content + ' '
             queue_chords.pop(0)
