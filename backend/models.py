@@ -1,3 +1,6 @@
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+
 import io
 import whisper
 import pandas as pd
@@ -11,6 +14,7 @@ if gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
 
 import autochord
+
 
 def get_free_gpus():
     gpu_stats = subprocess.check_output(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"], text=True)
