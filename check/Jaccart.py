@@ -1,10 +1,10 @@
 import Levenshtein
 from backend import EventType, Event
 
-def By_bar(elem) :
+def By_bar(elem):
     return elem[1]
 
-def jaccart(true_event, predict_event) :
+def Jaccart(true_event, predict_event):
     chords_true = []
     num_of_chord = []
     for i in range(0, len(true_event)):
@@ -41,8 +41,8 @@ def jaccart(true_event, predict_event) :
         left_bar = chord.start
         right_bar = chord.end
         num = 0
-        for i in range(0, len(num_of_chord)) :
-            if num_of_chord[i] == chord.content :
+        for i in range(0, len(num_of_chord)):
+            if num_of_chord[i] == chord.content:
                 num = i
                 break
         list_of_point.append([1, left_bar, num])
@@ -66,27 +66,27 @@ def jaccart(true_event, predict_event) :
     last_left = []
     cnt_of_left = []
     list_of_point.sort(key=By_bar)
-    for i in range(1, len(list_of_point)) :
-        if list_of_point[i - 1][1] == list_of_point[i][1] and list_of_point[i][0] == 1 :
+    for i in range(1, len(list_of_point)):
+        if list_of_point[i - 1][1] == list_of_point[i][1] and list_of_point[i][0] == 1:
             list_of_point[i], list_of_point[i - 1] = list_of_point[i - 1], list_of_point[i]
     # for i in list_of_point :
     #     print(i[0], i[1], i[2])
     # print()
-    for i in range(0, len(num_of_chord)) :
+    for i in range(0, len(num_of_chord)):
         last_left.append(0)
         cnt_of_left.append(0)
     maximum = 0
     result = 0
-    for i in range(0, len(list_of_point)) :
+    for i in range(0, len(list_of_point)):
         if cnt >= 1 :
             maximum += list_of_point[i][1] - list_of_point[i - 1][1]
-        if list_of_point[i][0] == 1 :
+        if list_of_point[i][0] == 1:
             cnt += 1
             last_left[list_of_point[i][2]] = list_of_point[i][1]
             cnt_of_left[list_of_point[i][2]] += 1
         else :
             cnt -= 1
-            if cnt_of_left[list_of_point[i][2]] > 1 :
+            if cnt_of_left[list_of_point[i][2]] > 1:
                 # print(list_of_point[i][1], last_left[list_of_point[i][2]])
                 result += list_of_point[i][1] - last_left[list_of_point[i][2]]
             cnt_of_left[list_of_point[i][2]] -= 1
@@ -115,4 +115,4 @@ def jaccart(true_event, predict_event) :
 #     chords_predict.append(v)
 # # print(chords_true[0].start, chords_true[0].end, chords_true[0].type, chords_true[0].content)
 # # print(chords_predict[0].start, chords_predict[0].end, chords_predict[0].type, chords_predict[0].content)
-# print(jaccart(chords_true, chords_predict))
+# print(Jaccart(chords_true, chords_predict))
