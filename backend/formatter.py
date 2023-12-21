@@ -7,12 +7,12 @@ import json
 class EventType(enum.IntEnum):
     chord = 1
     phrase = 2
-
+    newline = 3
 
 @dataclass(slots=True)
 class Event:
-    start: int
-    end: int
+    start: float
+    end: float
     type: EventType
     content: str
 
@@ -30,7 +30,13 @@ class Formatter:
             events.append(Event(start=chord[0], end=chord[1], type=EventType.chord, content=content))
 
         for seg in text["segments"]:
-            events.append(Event(start=seg["start"], end=seg["end"], type=EventType.phrase, content=seg["text"]))
+            if seg.get("words", None) is None:
+                events.append(Event(start=seg["start"], end=seg["end"], type=EventType.phrase, content=seg["text"]))
+            else:
+                events.append(Event(start=seg["start"], end=seg["end"], type=EventType.newline, content=""))
+
+            for word in seg.get("words", []):
+                events.append(Event(start=word["start"], end=word["end"], type=EventType.phrase, content=word["word"]))
                     
         events.sort(key=attrgetter("end"))
 
@@ -74,9 +80,9 @@ class Formatter:
                     queue_chords.append(el)
             else:
                 while queue_chords and queue_chords[0].end < el.start:
-                    result += queue_chords[0].content + \
-                    ' ' * int((queue_chords[0].end - \
-                    queue_chords[0].start) * space)
+                    result += queue_chords[0].content + ' ' * int(
+                        (queue_chords[0].end - queue_chords[0].start) * space
+                    )
                     queue_chords.pop(0)
                 result += '\n'
                 while queue_chords:
@@ -90,6 +96,8 @@ class Formatter:
             queue_chords.pop(0)
         return result
 
-    def format(self, chords, text) -> str:
+    def format(self, chords, text, use_word_timestamps: bool) -> str:
         events = self.parse_raw(chords, text)
-        return self.events_to_str(events) 
+        if use_word_timestamps:
+            return json.dumps(events, ensure_ascii=False, indent=4, default=lambda o: asdict(o))
+        return self.events_to_str(events)
