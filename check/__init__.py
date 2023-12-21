@@ -1,2 +1,2 @@
-from .Jaccart import *
-from .Levenshtein import *
+from .jaccart_check import *
+from .levenshtein_check import *
