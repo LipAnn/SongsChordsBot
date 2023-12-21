@@ -75,6 +75,11 @@ async def voice_handler(message: Message) -> None:
     )
     Path(f'./text/txt_{file_id}.txt').unlink()
 
+@dp.message()
+async def unknown_format_handler(message: Message):
+    await message.answer(
+        f'Данный формат файла я пока не умею обрабатывать 😢\nЯ понимаю только Голосовые сообщения и сообщения формата Аудио'
+    )
 
 async def main() -> None:
     await dp.start_polling(bot)
@@ -86,3 +91,4 @@ def start_bot() -> None:
 
 if __name__ == "__main__":
     start_bot()
+
