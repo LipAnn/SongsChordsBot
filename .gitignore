@@ -1,3 +1,5 @@
-bot/.env
-bot/__pycache__/*
+*/__pycache__
+.env
+voice/*
+text/*
 bot.log
