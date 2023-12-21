@@ -45,7 +45,7 @@ class Formatter:
         full_time = 0
         sum_symbols = 0
         for el in events:
-            if el.type == 2:
+            if el.type == EventType.phrase:
                 sum_symbols += len(el.content)
                 full_time += el.end - el.start
         space = max(sum_symbols // full_time, 1)
@@ -53,7 +53,7 @@ class Formatter:
         result = ""
         last_phrase = None
         for el in events:
-            if el.type == 1:
+            if el.type == EventType.chord:
                 if last_phrase:
                     if el.start <= last_phrase.end:
                         result += el.content + '\n' + \
