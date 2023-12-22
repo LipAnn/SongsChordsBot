@@ -58,6 +58,8 @@ class Formatter:
             )
         for event in events:
             if event.type == EventType.newline:
+                if len(chords) == chords.count(' '):
+                    chords = ''
                 result += make_bold(chords) + '\n' + text + '\n'
                 chords = ''
                 text = ''
