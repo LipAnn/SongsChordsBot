@@ -2,7 +2,7 @@ import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 import io
-import whisper
+from faster_whisper import WhisperModel
 import pandas as pd
 import subprocess
 from .formatter import Formatter
@@ -29,7 +29,7 @@ class Backend:
     def __init__(self) -> None:
         self.formatter = Formatter()
         gpu = get_free_gpus()
-        self.model = whisper.load_model("medium", device=f"cuda:{gpu}")
+        self.model = WhisperModel("large", device="cuda", device_index=gpu)
 
         # Moving encoder and decoder to separate gpus
         # self.model.encoder.to(f"cuda:{gpu1}")
@@ -43,7 +43,7 @@ class Backend:
     def query_txt(self, *, audio: str) -> io.BytesIO:
         return io.BytesIO(bytes(self.query(audio=audio), 'utf-8'))
 
-    def query(self, *, audio: str, compute_word_timestamps: bool = False) -> str:
-        text = self.model.transcribe(audio=audio, word_timestamps=compute_word_timestamps)
+    def query(self, *, audio: str, compute_word_timestamps: bool = True) -> str:
+        text, _ = self.model.transcribe(audio=audio, word_timestamps=compute_word_timestamps, vad_filter=True)
         chords = autochord.recognize(audio)
         return self.formatter.format(chords, text, use_word_timestamps=compute_word_timestamps)
