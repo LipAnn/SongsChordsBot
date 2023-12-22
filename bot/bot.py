@@ -6,7 +6,7 @@ from dotenv import load_dotenv, find_dotenv
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, InputFile
+from aiogram.types import Message, InputFile, MediaGroup
 from aiogram.types.input_file import FSInputFile
 from pathlib import Path
 
@@ -28,16 +28,25 @@ dp = Dispatcher()
 
 @dp.message(Command('start'))
 async def command_start_handler(message: Message) -> None:
-    await message.answer(
-        f'Какая-то информация о боте \nМаксимальное время получаемого аудиофайла - 5 минут\nПолучить помощь по команде /help'
+    start_info = "/n".join(
+        "Добро пожаловать! Данный бот умеет распознавать текст и аккорды присланной Вами песни.",
+        "Качество распознавания зависит от качества аудиозаписи.",
+        "Максимальное время получаемого аудиофайла - 5 минут.",
+        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение."
+        "Получить помощь можно по команде /help",
+        "Играйте с удовольствием! :)"
     )
+    await message.answer(start_info)
 
 
 @dp.message(Command('help'))
 async def command_help_handler(message: Message) -> None:
-    await message.answer(
-        f'Какая-то помощь Вам тут'
+    help_info = "/n".join(
+        "Качество распознавания зависит от качества аудиозаписи.",
+        "Максимальное время получаемого аудиофайла - 5 минут.",
+        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение."
     )
+    await message.answer(help_info)
 
 
 async def query_txt_from_backend(file_id) -> None:
@@ -51,7 +60,7 @@ async def voice_handler(message: Message) -> None:
     file_duraion = (message.audio.duration if message.audio else message.voice.duration)
     if file_duraion > 5*60:
         await message.answer(
-            f'Файл с музыкой слишком большой!\nОтправьте, пожалуйста, файл поменьше'
+            f'Файл с музыкой слишком большой!\nОтправьте, пожалуйста, файл длительностью не более 5 минут'
         )
         logging.info(f'Get voice with a size exceeding the maximum from user id={message.from_user.id}')
         return
@@ -61,7 +70,7 @@ async def voice_handler(message: Message) -> None:
     file_on_disk = Path(f'./voice/voice_{file_id}.mp3')
     await bot.download_file(file_path, file_on_disk)
     await message.answer(
-        f'Я загрузил Вашу музыку на сервер, ожидайте результат'
+        f'Я загрузил Вашу музыку на сервер, ожидайте результат.'
     )
     logging.info(f'Get voice from user id={message.from_user.id}. File id={file_id}')
     
@@ -70,10 +79,19 @@ async def voice_handler(message: Message) -> None:
         f.write(text.getbuffer())
     
     file_on_disk.unlink()
-    await message.reply_document(
-        FSInputFile(f'./text/txt_{file_id}.txt')
-    )
+   
+    # Send answer in several formats
+    media_group = MediaGroup()
+
+    media_group.attach_document(FSInputFile(f'./text/txt_{file_id}.txt'))
+    media_group.attach_document(FSInputFile(f'./text/pdf_{file_id}.pdf'))
+    media_group.attach_photo(FSInputFile(f'text/jpg_{file_id}.jpg'))
+
+    await bot.send_media_group(media=media_group, reply_to_message_id=message.message_id)
+
     Path(f'./text/txt_{file_id}.txt').unlink()
+    Path(f'./text/pdf_{file_id}.pdf').unlink()
+    Path(f'./text/jpg_{file_id}.jpg').unlink()
 
 
 @dp.message()
