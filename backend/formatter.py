@@ -38,62 +38,42 @@ class Formatter:
             for word in seg.words or []:
                 events.append(Event(start=word.start, end=word.end, type=EventType.phrase, content=word.word))
                     
-        events.sort(key=attrgetter("end"))
+        events.sort(key=attrgetter("start"))
 
         return events
 
+    def make_bold(self, s):
+        return s
+
     def events_to_str(self, events: list[Event]) -> str:
-        '''
-        Аккорды расставляются над соответствующей им строкой.
-        Считаем примерное время длительности одного символа текста 
-        и этот коэффициент умножаем на длительность каждого аккорда
-        '''
-        full_time = 0
-        sum_symbols = 0
-        for el in events:
-            if el.type == EventType.phrase:
-                sum_symbols += len(el.content)
-                full_time += el.end - el.start
-        space = max(sum_symbols // full_time, 1)
-        queue_chords = []
-        result = ""
-        last_phrase = []
-        events.append(
-            Event(
-                start=events[-1].end + 1,
-                end=events[-1].end + 1,
-                type=EventType.chord,
-                content=''
+        UNDEF = 10000
+        result = ''
+        chords = ''
+        text = ''
+        last_phrase = Event(
+            start=0,
+            end=UNDEF,
+            type=EventType.phrase, 
+            content=''
             )
-        )
-        for el in events:
-            if el.type == EventType.chord:
-                if last_phrase:
-                    if el.start <= last_phrase[-1].end:
-                        result += el.content + '\n' + \
-                        ''.join([phrase.content + '\n' for phrase in last_phrase])
-                    else:
-                        result += '\n' + ''.join([phrase.content + '\n' for phrase in last_phrase])
-                        queue_chords.append(el)
-                    last_phrase = []
-                else:
-                    queue_chords.append(el)
-            else:
-                while queue_chords and queue_chords[0].end < el.start:
-                    result += queue_chords[0].content + ' ' * int(
-                        (queue_chords[0].end - queue_chords[0].start) * space
-                    )
-                    queue_chords.pop(0)
-                result += '\n'
-                while queue_chords:
-                    result += queue_chords[0].content + ' ' * int(
-                        (queue_chords[0].end - max(queue_chords[0].start, el.start)) * space
-                    )
-                    queue_chords.pop(0)
-                last_phrase.append(el)
-        while queue_chords:
-            result += queue_chords[0].content + ' '
-            queue_chords.pop(0)
+        for event in events:
+            if event.type == EventType.newline:
+                result += make_bold(chords) + '\n' + text + '\n'
+                chords = ''
+                text = ''
+                last_phrase = Event(
+                    start=last_phrase.end,
+                    end=UNDEF,
+                    type=EventType.phrase, 
+                    content=''
+                )   
+            if event.type == EventType.chord:
+                chords += event.content + " "
+            if event.type == EventType.phrase:
+                text = text.ljust(len(chords))
+                chords = chords.ljust(len(text) + 1)
+                text += event.content
+                last_phrase = event
         return result
 
     def format(self, chords, text, use_word_timestamps: bool) -> str:
