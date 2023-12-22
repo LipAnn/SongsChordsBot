@@ -42,21 +42,20 @@ class Formatter:
 
         return events
 
-    def make_bold(s):
+    def make_bold(self, s):
         return '\033[1m' + s + '\033[0m'
 
     def events_to_str(self, events: list[Event]) -> str:
         UNDEF = 10000
-        events = [Event(
+        result = ''
+        chords = ''
+        text = ''
+        last_phrase = Event(
             start=0,
             end=UNDEF,
             type=EventType.phrase, 
             content=''
-            )] + events
-        result = ''
-        chords = ''
-        text = ''
-        last_phrase = None
+            )
         for event in events:
             if event.type == EventType.newline:
                 result += make_bold(chords) + '\n' + text + '\n'
@@ -71,8 +70,8 @@ class Formatter:
             if event.type == EventType.chord:
                 chords += event.content + " "
             if event.type == EventType.phrase:
-                text.ljust(len(chords))
-                chords.ljust(len(text))
+                text = text.ljust(len(chords))
+                chords = chords.ljust(len(text) + 1)
                 text += event.content
                 last_phrase = event
         return result
