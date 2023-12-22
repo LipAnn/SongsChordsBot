@@ -29,14 +29,14 @@ class Formatter:
                 content += "m"
             events.append(Event(start=chord[0], end=chord[1], type=EventType.chord, content=content))
 
-        for seg in text["segments"]:
-            if seg.get("words", None) is None:
-                events.append(Event(start=seg["start"], end=seg["end"], type=EventType.phrase, content=seg["text"]))
+        for seg in text:
+            if seg.words is None:
+                events.append(Event(start=seg.start, end=seg.end, type=EventType.phrase, content=seg.text))
             else:
-                events.append(Event(start=seg["start"], end=seg["end"], type=EventType.newline, content=""))
+                events.append(Event(start=seg.start, end=seg.end, type=EventType.newline, content=""))
 
-            for word in seg.get("words", []):
-                events.append(Event(start=word["start"], end=word["end"], type=EventType.phrase, content=word["word"]))
+            for word in seg.words or []:
+                events.append(Event(start=word.start, end=word.end, type=EventType.phrase, content=word.word))
                     
         events.sort(key=attrgetter("end"))
 
