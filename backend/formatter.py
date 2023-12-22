@@ -43,7 +43,7 @@ class Formatter:
         return events
 
     def make_bold(self, s):
-        return '\033[1m' + s + '\033[0m'
+        return s
 
     def events_to_str(self, events: list[Event]) -> str:
         UNDEF = 10000
