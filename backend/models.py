@@ -43,7 +43,7 @@ class Backend:
     def query_txt(self, *, audio: str) -> io.BytesIO:
         return io.BytesIO(bytes(self.query(audio=audio), 'utf-8'))
 
-    def query(self, *, audio: str, compute_word_timestamps: bool = False) -> str:
+    def query(self, *, audio: str, compute_word_timestamps: bool = True) -> str:
         text, _ = self.model.transcribe(audio=audio, word_timestamps=compute_word_timestamps, vad_filter=True)
         chords = autochord.recognize(audio)
         return self.formatter.format(chords, text, use_word_timestamps=compute_word_timestamps)
