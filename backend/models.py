@@ -5,7 +5,7 @@ import io
 from faster_whisper import WhisperModel
 import pandas as pd
 import subprocess
-from .formatter import Formatter
+from .formatter import Formatter, Event
 import tensorflow as tf
 
 gpus = tf.config.list_physical_devices('GPU')
@@ -47,3 +47,9 @@ class Backend:
         text, _ = self.model.transcribe(audio=audio, word_timestamps=compute_word_timestamps, vad_filter=True)
         chords = autochord.recognize(audio)
         return self.formatter.format(chords, text, use_word_timestamps=compute_word_timestamps)
+
+    def query_quality(self, *, audio: str, compute_word_timestamps: bool = True) -> list[Event]:
+        chords = autochord.recognize(audio)
+        return self.formatter.parse_raw(chords, [])
+
+    

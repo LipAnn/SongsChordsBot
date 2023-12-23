@@ -24,7 +24,9 @@ class Formatter:
     def parse_raw(self, chords, text) -> list[Event]:
         events: list[Event] = []
         for chord in chords:
-            content = chord[2][:-4]
+            content = chord[2]
+            if ":" in chord[2]:
+                content = chord[2][:-4]
             if chord[2].endswith("min"):
                 content += "m"
             events.append(Event(start=chord[0], end=chord[1], type=EventType.chord, content=content))
