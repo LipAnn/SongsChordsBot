@@ -2,4 +2,5 @@
 .env
 voice/*
 text/*
+dejavu-fonts-ttf-2.37/*
 bot.log
