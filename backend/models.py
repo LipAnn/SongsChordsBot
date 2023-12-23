@@ -25,6 +25,7 @@ def get_free_gpus():
     idx = gpu_df.nlargest(1, ['memory.free']).index
     return idx[0]
 
+
 class Backend:
     def __init__(self) -> None:
         self.formatter = Formatter()
@@ -41,9 +42,9 @@ class Backend:
         ...
 
     def query_txt(self, *, audio: str) -> io.BytesIO:
-        return io.BytesIO(bytes(self.query(audio=audio), 'utf-8'))
+        return io.BytesIO(bytes(self.query(audio=audio, compute_word_timestamps=True), 'utf-8'))
 
-    def query(self, *, audio: str, compute_word_timestamps: bool = True) -> str:
+    def query(self, *, audio: str, compute_word_timestamps: bool = False) -> str:
         text, _ = self.model.transcribe(audio=audio, word_timestamps=compute_word_timestamps, vad_filter=True)
         chords = autochord.recognize(audio)
         return self.formatter.format(chords, text, use_word_timestamps=compute_word_timestamps)
