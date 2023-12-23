@@ -33,29 +33,30 @@ dp = Dispatcher()
 
 @dp.message(Command('start'))
 async def command_start_handler(message: Message) -> None:
-    start_info = "/n".join(
-        "Добро пожаловать! Данный бот умеет распознавать текст и аккорды присланной Вами песни.",
-        "Качество распознавания зависит от качества аудиозаписи.",
-        f"Максимальное время получаемого аудиофайла - {MAX_SONG_LENGTH} мин.",
-        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение."
-        "Получить помощь можно по команде /help",
-        "Играйте с удовольствием! :)"
+    start_info = (
+        "Добро пожаловать! Данный бот умеет распознавать текст и аккорды присланной Вами песни.\n"
+        "Качество распознавания зависит от качества аудиозаписи.\n"
+        f"Максимальное время получаемого аудиофайла - {MAX_SONG_LENGTH} мин.\n"
+        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение.\n"
+        "Получить помощь можно по команде /help\n"
+        "Играйте с удовольствием! :)\n"
     )
     await message.answer(start_info)
 
 
 @dp.message(Command('help'))
 async def command_help_handler(message: Message) -> None:
-    help_info = "/n".join(
-        "Качество распознавания зависит от качества аудиозаписи.",
-        f"Максимальное время получаемого аудиофайла - {MAX_SONG_LENGTH} мин.",
-        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение."
+    help_info = (
+        "Качество распознавания зависит от качества аудиозаписи.\n"
+        f"Максимальное время получаемого аудиофайла - {MAX_SONG_LENGTH} мин.\n"
+        "Можно присылать как и файл с аудиозаписью, так и голосовое сообщение.\n"
     )
     await message.answer(help_info)
 
 
-async def query_txt_from_backend(file_id) -> None:
-    return backend.query_txt(audio=f'voice/voice_{file_id}.mp3', )
+async def query_txt_from_backend(file_id) -> io.BytesIO:
+    result = await asyncio.to_thread(backend.query_txt, audio=f'voice/voice_{file_id}.mp3')
+    return result
 
 
 async def dump_str_to_txt(text: str, file_path: str) -> None:
