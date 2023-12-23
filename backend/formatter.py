@@ -76,10 +76,9 @@ class Formatter:
         )
 
         events = list(sorted(events, key=lambda x: (x.start if x.type != EventType.newline else x.end - 1e-7, x.type, x.start)))
-
         for event in events:
             if event.type == EventType.newline:
-                result += self.make_bold(chords) + '\n' + text + '\n'
+                result += (self.make_bold(chords) + '\n' if chords.count(" ") < len(chords) else '') + text + '\n'
                 chords = ''
                 text = ''
                 last_phrase = Event(
